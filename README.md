@@ -4,7 +4,7 @@ There are 2 smart contract related
 * Token Smart Contract - to manage people credit. more token means more reputation.
 * Share Smart Contract - to manage individual trusted share
 
-### Start development
+# Start development
 
 ## Required software
 
