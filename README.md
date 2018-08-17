@@ -23,6 +23,8 @@ npm install -g ganache-cli
 
 mkdir ganache-share-db
 ganache-cli --db ganache-share-db
+
+# Copy all private keys (we need it later)
 ```
 
 ## Import smart contract to remix ide
@@ -32,11 +34,11 @@ ganache-cli --db ganache-share-db
 * Create new file named "MyCreditToken.sol"
 * Copy content from [MyCreditToken.sol](https://raw.githubusercontent.com/pongsatt/myshare-ui/master/smartcontracts/MyCreditToken.sol)
 * Create new file named "MyShare.sol"
-* Copy content from [MyShare.sol]((https://raw.githubusercontent.com/pongsatt/myshare-ui/master/smartcontracts/MyShare.sol))
+* Copy content from [MyShare.sol](https://raw.githubusercontent.com/pongsatt/myshare-ui/master/smartcontracts/MyShare.sol))
 
 
 ## Install MetaMask chrome extension
-TBD
+[MetaMask Chrome Extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en)
 
 ## Import accounts to MetaMask
 TBD
