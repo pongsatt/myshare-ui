@@ -5,7 +5,9 @@ import { getAccount, getContract, promisify, watchOnce } from './web3client';
 import * as web3client from './web3client';
 export * from './web3client';
 
-const tokenContract: any = getContract(MyCreditTokenAbi, '0x021fbcfc3a65ced4d430038ad756415c8d2db8fd');
+import tokenContractAddr from './tokenContractAddress';
+
+const tokenContract: any = getContract(MyCreditTokenAbi, tokenContractAddr);
 
 export async function getToken(address?: string): Promise<number> {
     address = address || getAccount();
@@ -15,6 +17,8 @@ export async function getToken(address?: string): Promise<number> {
 
 export async function createNewShare(s: IShare): Promise<string> {
     const { target, share, startInDays, minInterest } = s;
+
+    console.log('createNewShare: ', s);
     await promisify((f) => tokenContract.createShare(target, share, startInDays, minInterest, f));
     const shareCreated = await watchOnce(tokenContract.ShareCreated({}, 'latest'));
     return shareCreated && shareCreated.args && shareCreated.args.shareAddr;
@@ -72,6 +76,8 @@ export async function getShareDetail(shareAddr: string): Promise<IShare> {
     const round = await promisify((f) => shareInstance.payingRound(f));
 
     const isParticipated = participant[ParticipantFields.addr] === myAddress;
+    const interest = participant[ParticipantFields.interestEth];
+    const isBenefited = participant[ParticipantFields.isBenefited];
 
     const data = shareCreatedEvents[0].args;
     const {chairman, targetETH, shareNum, startInMins, minimumInterestETH} = data;
@@ -86,7 +92,9 @@ export async function getShareDetail(shareAddr: string): Promise<IShare> {
         startInDays: startInMins.toNumber(), 
         status: status.toNumber(),
         target: targetETH.toNumber(),
-        round: round.toNumber()
+        round: round.toNumber(),
+        interest: interest.toNumber(),
+        isBenefited
     }
 }
 
@@ -100,6 +108,10 @@ export async function join(address: string): Promise<void> {
 export async function start(address: string): Promise<void> {
     const shareInstance = getContract(MyShareAbi, address);
     await promisify((f) => shareInstance.start(f));
+}
+
+export async function transfer(address: string, amount: number): Promise<void> {
+    return await web3client.sendTransaction({to: address, eth: amount});
 }
 
 export async function withdraw(address: string): Promise<void> {

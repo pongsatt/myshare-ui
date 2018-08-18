@@ -34,6 +34,8 @@ export interface IShare {
     participant?: any,
     beneficiary?: string,
     round?: number
+    isBenefited?: number
+    interest?: number
 }
 
 export interface IShareParticipate {

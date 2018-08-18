@@ -19,7 +19,10 @@
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "ethserve": "mkdir -p ganachedb && ganache-cli --db ganachedb --account=\"0xbfe038810d51b8a788e5f63d2a0822d1f8ef712a7acbbf9877013efb3c5f5514,100\"  --account=\"0xb07210851b10f884f5b4e57a8e76e717cc5cd9b496801cb93dac380747239b0f,100\"   --account=\"0x46c855cb4a30c5630b5884fde176fe6d4b2c26f12c8607452c72ca31c537120e,100\"",
+    "gentoken": "node ./smartcontracts/initialToken",
+    "updateinf": "node ./smartcontracts/updateInterfaces"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
@@ -29,6 +32,8 @@
     "@types/react-redux": "^6.0.6",
     "@types/react-router-dom": "^4.3.0",
     "@types/web3": "^1.0.3",
+    "ganache-cli": "7.0.0-beta.0",
+    "solc": "^0.4.24",
     "typescript": "~2.9.1"
   }
 }

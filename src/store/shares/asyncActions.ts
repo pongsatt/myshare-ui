@@ -65,6 +65,14 @@ export async function start(dispatch: Dispatch<ActionTypes>, address: string) {
     return await web3service.start(address);
 }
 
+export async function withdraw(dispatch: Dispatch<ActionTypes>, address: string) {
+    return await web3service.withdraw(address);
+}
+
+export async function transfer(dispatch: Dispatch<ActionTypes>, address: string, amount: number) {
+    return await web3service.transfer(address, amount);
+}
+
 export async function waitWeb3Connect() {
     return await web3service.connect();
 }

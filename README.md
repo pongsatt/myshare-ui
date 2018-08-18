@@ -14,37 +14,46 @@ There are 2 smart contract related
 
 ```
 git clone https://github.com/pongsatt/myshare-ui.git
+
+cd myshare-ui
+
+yarn
 ```
 
-## Install and run Ethereum blockchain test server [ganache-cli](https://github.com/trufflesuite/ganache-cli)
+## Start Ethereum blockchain test server [ganache-cli](https://github.com/trufflesuite/ganache-cli)
 
 ```
-npm install -g ganache-cli
-
-mkdir ganache-share-db
-ganache-cli --db ganache-share-db
-
-# Copy all private keys (we need it later)
+# On project directory
+yarn ethserve
 ```
-
-## Import smart contract to remix ide
-
-* Open remix [here](https://remix.ethereum.org/#optimize=true&version=soljson-v0.4.24+commit.e67f0147.js)
-* Select tab "Run" and choose "Environment" to "Web3 Provider" then confirm
-* Create new file named "MyCreditToken.sol"
-* Copy content from [MyCreditToken.sol](https://raw.githubusercontent.com/pongsatt/myshare-ui/master/smartcontracts/MyCreditToken.sol)
-* Create new file named "MyShare.sol"
-* Copy content from [MyShare.sol](https://raw.githubusercontent.com/pongsatt/myshare-ui/master/smartcontracts/MyShare.sol))
-
-
-## Install MetaMask chrome extension
-[MetaMask Chrome Extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en)
-
-## Import accounts to MetaMask
-TBD
 
 ## Initialize token smart contract
-TBD
+
+```
+yarn gentoken
+```
+
+What it does?
+* Compile smart contract source code at "smartcontracts/MyCreditToken.sol"
+* Deploy this smart contract to ganache server running from previous step
+* Update smart contract address at "src/web3/tokenContractAddress.ts"
+
+# To play from UI
+
+## Install MetaMask chrome extension (If have not been done)
+[MetaMask Chrome Extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en)
+
+## Point MetaMask to local server
+* Click MetaMask icon
+* select "localhost 8545" network
+
+## Import accounts to MetaMask
+* Click MetaMask icon
+* Click account icon
+* Open file "smartcontracts/testaccounts.txt"
+* Import first 3 private keys one by one
+
+** If done correctly, you will see token number > 0
 
 ## Start development server
 

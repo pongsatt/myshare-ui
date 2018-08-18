@@ -82,6 +82,11 @@ function getShareActions(state: IShareState, share: IShare) {
     actions.push(ShareAction.Transfer);
   }
 
+  if (status === ShareStatus.WaitWithdraw
+    && account === beneficiary) {
+    actions.push(ShareAction.Withdraw);
+  }
+
   // tslint:disable-next-line:no-console
   console.log('getShareActions: ', actions);
   return actions;

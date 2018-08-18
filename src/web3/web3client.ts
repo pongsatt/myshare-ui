@@ -114,3 +114,22 @@ export function watchOnce(event: any): Promise<any> {
         })
     });
 }
+
+export interface ITransactionObject {
+    from?: string
+    to: string
+    eth?: number
+    value?: number
+    gas?: number
+    gasPrice?: number
+    data?: string
+    nonce?: number
+}
+
+export async function sendTransaction(transaction: ITransactionObject) {
+    if (transaction.eth) {
+        transaction.value = web3.toWei(transaction.eth, "ether");
+    }
+    console.log('sendTransaction: ', transaction);
+    return await promisify((f) => web3.eth.sendTransaction(transaction, f));
+}
