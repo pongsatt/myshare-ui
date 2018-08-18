@@ -38,7 +38,7 @@ What it does?
 * Deploy this smart contract to ganache server running from previous step
 * Update smart contract address at "src/web3/tokenContractAddress.ts"
 
-# To play from UI
+# Start playing with UI
 
 ## Install MetaMask chrome extension (If have not been done)
 [MetaMask Chrome Extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en)
