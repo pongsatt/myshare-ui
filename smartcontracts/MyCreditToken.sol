@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import './MyShare.sol';
+import "./MyShare.sol";
 
 contract MyCreditToken {
     // Public variables of the token
@@ -25,43 +25,50 @@ contract MyCreditToken {
         uint256 initialSupply,
         address[] recipients
     ) public {
-        require (recipients.length > 0);
+        require (recipients.length > 0, "Recipients are required in ['address1', 'address2']");
         
         totalSupply = initialSupply * 10 ** uint256(decimals);  // Update total supply with the decimal amount
         
         uint256 each = totalSupply / recipients.length;
         
-        for (uint256 i=0; i<recipients.length; i++) {
+        for (uint256 i = 0; i < recipients.length; i++) {
             balanceOf[recipients[i]] = each;
         }
     }
     
     modifier onlyListedShare {
-        require(shareExists[msg.sender]);
+        require(shareExists[msg.sender], "Only Listed share smart contract allowed");
         _;
     }
     
-    function lockTokens(address _target, uint256 _tokens) onlyListedShare public returns (bool) {
+    function lockTokens(address _target, uint256 _tokens) public onlyListedShare returns (bool) {
         return _lockTokens(_target, _tokens);
     }
     
     function _lockTokens(address _target, uint256 _tokens) internal returns (bool) {
-        require (balanceOf[_target] >= _tokens);
+        require (balanceOf[_target] >= _tokens, "Not enough tokens to be locked");
         
         balanceOf[_target] -= _tokens;
         lockedTokens[_target] += _tokens;
         return true;
     }
     
-    function unlockTokens(address _target, uint256 _tokens) onlyListedShare public returns (bool) {
-        require (lockedTokens[_target] >= _tokens);
+    function unlockTokens(address _target, uint256 _tokens) public onlyListedShare returns (bool) {
+        require (lockedTokens[_target] >= _tokens, "Not enough tokens to be unlocked");
         
         balanceOf[_target] += _tokens;
         lockedTokens[_target] -= _tokens;
         return true;
     }
     
-    event ShareCreated(address indexed shareAddr, address indexed chairman, uint256 targetETH, uint256 shareNum, uint256 startInMins, uint256 minimumInterestETH);
+    event ShareCreated(
+    address indexed shareAddr, 
+    address indexed chairman, 
+    uint256 targetETH, 
+    uint256 shareNum, 
+    uint256 startInMins, 
+    uint256 minimumInterestETH);
+
     event ShareParticipated (address indexed shareAddr, address indexed participant, bool indexed isChaired, uint256 tokens);
     
     function createShare(
@@ -72,7 +79,7 @@ contract MyCreditToken {
         
         uint256 requiredTokens = _targetETH * 1 ether / _shareNum;
         
-        require(_lockTokens(msg.sender, requiredTokens));
+        require(_lockTokens(msg.sender, requiredTokens), "Cannot lock tokens");
         share = new MyShare(_targetETH, _shareNum, msg.sender, requiredTokens, _startInMins, _minimumInterestETH,  this);
         
         shares[share] = share;
@@ -83,7 +90,7 @@ contract MyCreditToken {
         emit ShareParticipated(share, msg.sender, true, requiredTokens);
     }
     
-    function participateShare(address shareAddr, address participant, bool isChaired, uint256 tokens) onlyListedShare public {
+    function participateShare(address shareAddr, address participant, bool isChaired, uint256 tokens) public onlyListedShare {
         emit ShareParticipated(shareAddr, participant, isChaired, tokens);
     }
     

@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import './MyCreditToken.sol';
+import "./MyCreditToken.sol";
 
 contract MyShare {
     uint256 public targetETH;
@@ -47,7 +47,7 @@ contract MyShare {
         uint256 _mininumInterestETH,
         MyCreditToken _token
     ) public {
-        require (_shareNum > 1);
+        require (_shareNum > 1, "Share number muust greater than 1");
         targetETH = _targetETH;
         shareNum = _shareNum;
         chairman = _chairman;
@@ -74,46 +74,46 @@ contract MyShare {
     }
     
     modifier onlyChairman {
-        require(msg.sender == chairman);
+        require(msg.sender == chairman, "Only chairman allowed");
         _;
     }
     
     modifier openToJoin {
-        require (status == Status.Open);
+        require (status == Status.Open, "Not open to join");
         _;
     }
     
     modifier startDateReached {
-        require (now >= startDate);
+        require (now >= startDate, "Start date not reached yet");
         _;
     }
     
     modifier dueDateReached {
-        require (now >= currentDueDate);
+        require (now >= currentDueDate, "Due date not reached yet");
         _;
     }
     
     modifier onlyParticipant {
-        require (participants[msg.sender].exists == true);
+        require (participants[msg.sender].exists == true, "Only participant allowed");
         _;
     }
     
     modifier onlyBeneficiary {
-        require (msg.sender == currentBeneficiary);
+        require (msg.sender == currentBeneficiary, "Only beneficiary allowed");
         _;
     }
     
     modifier allPaid {
-        require (currentPaidNum == currentPaidNeededNum);
+        require (currentPaidNum == currentPaidNeededNum, "Not all paid");
         _;
     }
     
-    function join() openToJoin public {
-        require (participants[msg.sender].exists == false);
+    function join() public openToJoin {
+        require (participants[msg.sender].exists == false, "You already join");
         
         uint256 requiredTokens = targetETH * 1 ether / shareNum;
         
-        require (token.lockTokens(msg.sender, requiredTokens));
+        require (token.lockTokens(msg.sender, requiredTokens), "Cannot lock token");
         
         _addParticipant(msg.sender, requiredTokens, false);
         
@@ -124,19 +124,19 @@ contract MyShare {
         }
     }
     
-    function start() onlyChairman public {
+    function start() public onlyChairman {
         currentBeneficiary = msg.sender;
         
         // _nextRound(25 hours);
         _nextRound(1 seconds);
     }
     
-    function nextBeneficiary() onlyChairman dueDateReached allPaid public {
-        require (currentBeneficiary == 0x0);
+    function nextBeneficiary() public onlyChairman dueDateReached allPaid {
+        require (currentBeneficiary == 0x0, "Beneficiary already exist");
         
         // all paid and no beneficiary yet
         _chooseNextBeneficiary();
-        currentPaidETH-=_returnInterestToNonBeneficiary();
+        currentPaidETH -= _returnInterestToNonBeneficiary();
     }
     
     function _nextRound(uint256 dueIn) internal {
@@ -154,7 +154,7 @@ contract MyShare {
     }
     
     function withdraw() onlyBeneficiary allPaid public {
-        require (currentPaidETH > 0);
+        require (currentPaidETH > 0, "No paid");
         
         uint256 toTransferWei = currentPaidETH * 1 ether;
         currentPaidETH = 0;
@@ -165,8 +165,8 @@ contract MyShare {
         _nextRound(1 seconds);
     }
     
-    function cancelBeforeStart() onlyChairman openToJoin public {
-        for (uint256 i=0; i<participantAddrs.length; i++) {
+    function cancelBeforeStart() public onlyChairman openToJoin {
+        for (uint256 i = 0; i < participantAddrs.length; i++) {
             Participant storage p = participants[participantAddrs[i]];
             token.unlockTokens(p.addr, p.lockedTokens);
         }
@@ -174,27 +174,27 @@ contract MyShare {
         status = Status.Cancelled;
     }
     
-    function () payable onlyParticipant public {
-        require (msg.sender != currentBeneficiary);
+    function () payable public onlyParticipant {
+        require (msg.sender != currentBeneficiary, "Beneficiary does not need to pay");
         
         Participant storage p = participants[msg.sender];
         
-        require (p.paidRound < payingRound);
+        require (p.paidRound < payingRound, "You already paid this round");
         
         uint256 basedPay = targetETH / shareNum;
         
         if (p.isBenefited || payingRound == 1) {
             uint256 toPayWei1 = (basedPay + p.interestEth) * 1 ether;
-            require (msg.value == toPayWei1);
+            require (msg.value == toPayWei1, "Not enough value to pay");
         } else {
             uint256 toPayWei2 = (basedPay + minimumInterestETH) * 1 ether;
-            require (msg.value > toPayWei2);
+            require (msg.value > toPayWei2, "Not enough value to pay (need interest > mininum)");
             p.interestEth = msg.value/1 ether - basedPay + minimumInterestETH;
         }
         
         p.paidRound = payingRound;
         currentPaidNum++;
-        currentPaidETH+=msg.value/1 ether;
+        currentPaidETH += msg.value / 1 ether;
         
         if (currentPaidNum == currentPaidNeededNum) {
             status = Status.WaitWithdraw;
@@ -205,7 +205,7 @@ contract MyShare {
         uint256 maxInterest = 0;
         mapping (uint256 => address[]) interestEthMap = emptyMap;
         
-        for (uint256 i=0; i<participantAddrs.length; i++) {
+        for (uint256 i = 0; i < participantAddrs.length; i++) {
             Participant memory p = participants[participantAddrs[i]];
             
             if (!p.isBenefited && p.interestEth >= maxInterest) {
@@ -228,14 +228,14 @@ contract MyShare {
     function _returnInterestToNonBeneficiary() internal returns (uint256) {
         uint256 returnedETH = 0;
         
-        for (uint256 i=0; i<participantAddrs.length; i++) {
+        for (uint256 i = 0; i < participantAddrs.length; i++) {
             Participant storage p = participants[participantAddrs[i]];
             
             if (!p.isBenefited && p.addr != currentBeneficiary) {
                 uint256 toReturn = p.interestEth;
                 p.interestEth = 0;
                 p.addr.transfer(toReturn);
-                returnedETH+=toReturn;
+                returnedETH += toReturn;
             }
         }
         
