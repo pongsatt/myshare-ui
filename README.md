@@ -4,6 +4,9 @@ There are 2 smart contract related
 * Token Smart Contract - to manage people credit. more token means more reputation.
 * Share Smart Contract - to manage individual trusted share
 
+### Demo page
+https://pongsatt.github.io/shares
+
 # Start development
 
 ## Required software
