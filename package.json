@@ -12,8 +12,7 @@
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "styled-components": "^3.4.2",
-    "typesafe-actions": "^2.0.4",
-    "web3": "^1.0.0-beta.35"
+    "typesafe-actions": "^2.0.4"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -34,6 +33,7 @@
     "@types/web3": "^1.0.3",
     "ganache-cli": "7.0.0-beta.0",
     "solc": "^0.4.24",
-    "typescript": "~2.9.1"
+    "typescript": "~2.9.1",
+    "web3": "^1.0.0-beta.35"
   }
 }
