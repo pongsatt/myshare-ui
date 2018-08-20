@@ -5,7 +5,7 @@ There are 2 smart contract related
 * Share Smart Contract - to manage individual trusted share
 
 ### Demo page
-https://pongsatt.github.io/shares
+https://pongsatt.github.io/myshare-ui/
 
 # Start development
 
